@@ -48,14 +48,16 @@ def clear_screen():
 def main():
     conn = connect(param_dic)
     system_info()
-    phrases_df = pd.read_csv("phrases.csv") # Open file with not found phrases
+    phrases_df = pd.read_csv("csv-files/phrases.csv") # Open file with not found phrases
     clear_screen()
     print_center("# # # #  H E L L O  # # # #")
     compare_with_another_file = input("\nDo you want to compare with another file? [Y/N] ").upper()
     if compare_with_another_file == "Y":
         name_of_file = input("Name: ")
         file_df = pd.read_csv(name_of_file+".csv") # Open file to compare
+        compared_file = pd.merge(file_df['name'].reset_index(drop=True),phrases_df.reset_index(drop=True))
+        print(compared_file)
     else:
-        print("Done")
+        print_center(Back.GREEN+"# # # #  D O N E  # # # #"+Style.RESET_ALL)
 
 main()
