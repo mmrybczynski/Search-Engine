@@ -2,6 +2,24 @@
 import platform
 import os
 import time
+import pandas
+import psycopg2
+
+param_dic = {
+    "host"      :   "", # IP addres of postgres server
+    "database"  :   "", # Name of database
+    "user"      :   "", # User name
+    "password"  :   "" # User password
+}
+def connect(params):
+    conn = None
+    try: # Try to connect to database
+        print("Connecting to database")
+        conn = psycopg2.connect(**params)
+        print_center("Connection succesfull")
+    except (Exception,psycopg2.DatabaseError) as error: # Catch errors of connection
+        print(error)
+    return conn
 
 # Print center function
 def print_center(text):
@@ -26,6 +44,6 @@ def clear_screen():
 
 def main():
     clear_screen()
-    print_center("\n# # # #  H E L L O  # # # #\n")
+    print_center("# # # #  H E L L O  # # # #")
 
 main()
