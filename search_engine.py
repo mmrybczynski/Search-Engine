@@ -54,6 +54,24 @@ def clear_screen():
         clear = lambda: os.system('clear')
         clear()
 
+# Transform sql query to pandas dataframe
+def postgresql_to_dataframe(conn, select_query, column_names):
+    cursor = conn.cursor()
+    try:
+        cursor.execute(select_query)
+    except (Exception, psycopg2.DatabaseError) as error:
+        print("Error: %s" % error)
+        cursor.close()
+        return 1
+   
+    # Naturally we get a list of tupples
+    tupples = cursor.fetchall()
+    cursor.close()
+   
+    # We just need to turn it into a pandas dataframe
+    database_df = pd.DataFrame(tupples, columns=column_names)
+    return database_df
+
 def main():
     system_info()
     clear_screen()
@@ -76,6 +94,10 @@ def main():
 
     print_center("# # # #  O N L Y  N A M E  # # # #")
     print(search_name)
+
+    # Combine database pandas dataframe with phrases not found
+
+
 
 conn = connect(param_dic)
 time.sleep(5)
