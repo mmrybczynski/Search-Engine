@@ -76,7 +76,7 @@ def main():
     system_info()
     clear_screen()
     print_center("# # # #  H E L L O  # # # #")
-    print("Now you can chose dp you want to compare with files, which contains mpn's")
+    print("You can choose whether you want to compare phrases not found with another file containing mpn.")
     compare_with_another_file = input("Do you want to compare with another file? [Y/N] ").upper()
     if compare_with_another_file == "Y":
         # Compare with file
@@ -96,6 +96,17 @@ def main():
     print(search_name)
 
     # Combine database pandas dataframe with phrases not found
+    if not conn == None:
+        temp = "'"+name_of_manufacturer+"'"
+        # connect to database
+        column_names = ["", ""]
+
+        # Here we can tyoe SQL query
+        query =     """SELECT , 
+                    FROM 
+                    WHERE  ILIKE""" + temp
+
+        query_df = postgresql_to_dataframe(conn, query, column_names)
 
 
 
