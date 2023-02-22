@@ -56,25 +56,31 @@ def clear_screen():
 
 def main():
     system_info()
-    conn = connect(param_dic)
-    time.sleep(5)
-    phrases_df = pd.read_csv("csv-files/phrases-not-found.csv") # Open file with not found phrases
     clear_screen()
     print_center("# # # #  H E L L O  # # # #")
     print("Now you can chose dp you want to compare with files, which contains mpn's")
-    compare_with_another_file = input("\nDo you want to compare with another file? [Y/N] ").upper()
+    compare_with_another_file = input("Do you want to compare with another file? [Y/N] ").upper()
     if compare_with_another_file == "Y":
-        name_of_file = input("Name: ")
+        # Compare with file
+        name_of_file = input("Name of file: ")
         file_df = pd.read_csv("csv-files/"+name_of_file+".csv") # Open file to compare
+        file_df['name'] = file_df['name'].str.upper()
         compared_file = pd.merge(file_df['name'].reset_index(drop=True),phrases_df.reset_index(drop=True))
 
         print_center("# # # #  C O M P A R E D  F I L E  # # # #")
         print(compared_file)
+    
+    # Search name of company in phrases not found file
+    name_of_manufacturer = input("Name of manufacturer: ").upper()
+    search_name = phrases_df.loc[phrases_df['name'] == name_of_manufacturer]
 
-        
-    else:
-        print("")
+    print_center("# # # #  O N L Y  N A M E  # # # #")
+    print(search_name)
 
+conn = connect(param_dic)
+time.sleep(5)
+phrases_df = pd.read_csv("csv-files/phrases-not-found.csv") # Open file with not found phrases
+phrases_df['name']=phrases_df['name'].str.upper()
 main()
 
 # END of program
