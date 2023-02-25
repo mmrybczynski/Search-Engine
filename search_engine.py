@@ -5,6 +5,8 @@ import time
 import pandas as pd
 import psycopg2
 from colorama import Fore, Back, Style
+import warnings
+warnings.simplefilter(action='ignore', category=FutureWarning)
 
 # Connection to databse
 param_dic = {
@@ -113,8 +115,21 @@ def main():
         print("")
         print_center("# # # #  D A T A B A S E  # # # #")
         print(founded_in_database)
-        print("")
+    
+    # Look similar phrases
+    array_to_checking = [name_of_manufacturer+" ",name_of_manufacturer+":",name_of_manufacturer+"-",name_of_manufacturer+" :",name_of_manufacturer+" -"]
+    similar_phrases = phrases_df.loc[phrases_df['name'].str.contains('|'.join(array_to_checking)).ffill(False)]
+    print("")
+    print_center("# # # #  S I M I L A R # # # #")
+    print(similar_phrases)
+    print("")
 
+for i in range(os.get_terminal_size().columns-1):
+    if i >= os.get_terminal_size().columns-2:
+        print("#")
+    else:
+        print("#",end="")
+        
 conn = connect(param_dic)
 time.sleep(5)
 phrases_df = pd.read_csv("csv-files/phrases-not-found.csv") # Open file with not found phrases
