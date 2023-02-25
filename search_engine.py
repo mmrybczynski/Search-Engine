@@ -8,9 +8,9 @@ from colorama import Fore, Back, Style
 
 # Connection to databse
 param_dic = {
-    "host"      :   "", # IP addres of postgres server
-    "database"  :   "", # Name of database
-    "user"      :   "", # User name
+    "host"      :   "localhost", # IP addres of postgres server
+    "database"  :   "dataset", # Name of database
+    "user"      :   "mati", # User name
     "password"  :   "" # User password
 }
 def connect(params):
@@ -76,8 +76,8 @@ def main():
     system_info()
     clear_screen()
     print_center("# # # #  H E L L O  # # # #")
-    print("You can choose whether you want to compare phrases not found with another file containing mpn.")
-    compare_with_another_file = input("Do you want to compare with another file? [Y/N] ").upper()
+    print("Do you have file with mpns to compare")
+    compare_with_another_file = input("[Y/N] ").upper()
     if compare_with_another_file == "Y":
         # Compare with file
         name_of_file = input("Name of file: ")
@@ -102,13 +102,11 @@ def main():
         column_names = ["", ""]
 
         # Here we can tyoe SQL query
-        query =     """SELECT , 
-                    FROM 
-                    WHERE  ILIKE""" + temp
+        query =     """SELECT mpn,manufacturer_root_name 
+                    FROM manufacturers
+                    WHERE manufacturer_root_name ILIKE""" + temp
 
         query_df = postgresql_to_dataframe(conn, query, column_names)
-
-
 
 conn = connect(param_dic)
 time.sleep(5)
