@@ -99,7 +99,7 @@ def main():
     if not conn == None:
         temp = "'"+name_of_manufacturer+"'"
         # connect to database
-        column_names = ["", ""]
+        column_names = ["mpn", "manufacturer_root_name"]
 
         # Here we can tyoe SQL query
         query =     """SELECT mpn,manufacturer_root_name 
@@ -107,6 +107,13 @@ def main():
                     WHERE manufacturer_root_name ILIKE""" + temp
 
         query_df = postgresql_to_dataframe(conn, query, column_names)
+        query_df['mpn']=query_df['mpn'].str.upper()
+        new_name = query_df.rename(columns={'mpn':'name'})
+        founded_in_database = pd.merge(phrases_df.reset_index(drop=True),new_name['name'].reset_index(drop=True))
+        print("")
+        print_center("# # # #  D A T A B A S E  # # # #")
+        print(founded_in_database)
+        print("")
 
 conn = connect(param_dic)
 time.sleep(5)
