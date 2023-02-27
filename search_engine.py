@@ -134,7 +134,7 @@ def searchForOneCompany():
     # END of program
     print_center(Back.GREEN+"# # # #  D O N E  # # # #"+Style.RESET_ALL)
 
-def tempOneYear(manufacturer_name,phrases_df,conn):
+def tempSearch(manufacturer_name,phrases_df,conn):
     # Search name of company in phrases not found file
     print_center('# # # #  '+manufacturer_name+'  # # # #')
     search_name = phrases_df.loc[phrases_df['name'] == manufacturer_name]
@@ -169,7 +169,6 @@ def tempOneYear(manufacturer_name,phrases_df,conn):
         print(similar_phrases)
         print("")
 
-
 def searchForMoreCompanies():
     conn = connect(param_dic)
     time.sleep(3)
@@ -188,7 +187,7 @@ def searchForMoreCompanies():
             typing = False
 
     for i in range(len(names_list)):
-        tempOneYear(names_list[i],phrases_df,conn)
+        tempSearch(names_list[i],phrases_df,conn)
 
     # Close connection with database
     conn.close()
