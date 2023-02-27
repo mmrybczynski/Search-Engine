@@ -76,8 +76,6 @@ def postgresql_to_dataframe(conn, select_query, column_names):
     return database_df
 
 def main():
-    system_info()
-    clear_screen()
     print_center("# # # #  H E L L O  # # # #")
     print("Do you have file with mpns to compare")
     compare_with_another_file = input("[Y/N] ").upper()
@@ -131,6 +129,37 @@ for i in range(os.get_terminal_size().columns-1):
     else:
         print("#",end="")
 
+def compareTwoFiles():
+    firstFile = input("Name of first file: ")
+    secondFile = input("Name of second file: ")
+
+    first_df = pd.read_csv('files/'+firstFile+'.csv')
+    second_df = pd.read_csv('files/'+secondFile+'.csv')
+
+    print("\nColumns in first file:",end=" ")
+    for col in first_df.columns:
+        print(col, end=" | ")
+    print("")
+    column_first_file = input("Which column do you want to compare? ")
+
+    print("\nColumns in second file:",end=" ")
+    for col in second_df.columns:
+        print(col, end=" | ")
+    print("")
+    column_second_file = input("Which column do you want to compare? ")
+
+    first_new_df = first_df.rename(columns={column_first_file:'Compared'})
+    second_new_def = second_df.rename(columns={column_second_file:'Compared'})
+
+    first_new_df['Compared'] = first_new_df['Compared'].str.upper()
+    second_new_def['Compared'] = second_new_def['Compared'].str.upper()
+
+    merged_df = pd.merge(first_new_df['Compared'].reset_index(drop=True),second_new_def['Compared'].reset_index(drop=True))
+    print(merged_df)
+
+system_info()
+clear_screen()
+
 title = 'Please choose what do you want to do'
 options = ['Compare two files', 'Check mpn', 'Check qty of search company', 'Check qty of search company for more companys']
 option, index = pick(options, title, indicator='=>', default_index=2)
@@ -138,11 +167,14 @@ option, index = pick(options, title, indicator='=>', default_index=2)
 if index == 0: # Compare two files
     compareTwoFiles()
 elif index == 1:
-    checkMPN()
+    #checkMPN()
+    print("")
 elif index == 2:
-    searchForOneCompany()
+    #searchForOneCompany()
+    print("")
 elif index == 3:
-    searchForMore()
+    #searchForMore()
+    print("")
 else:
     # END of program
     print_center(Back.GREEN+"# # # #  D O N E  # # # #"+Style.RESET_ALL)
