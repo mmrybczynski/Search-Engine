@@ -75,7 +75,11 @@ def postgresql_to_dataframe(conn, select_query, column_names):
     database_df = pd.DataFrame(tupples, columns=column_names)
     return database_df
 
-def main():
+def searchForOneCompany():
+    conn = connect(param_dic)
+    time.sleep(3)
+    phrases_df = pd.read_csv("csv-files/phrases-not-found.csv") # Open file with not found phrases
+    phrases_df['name']=phrases_df['name'].str.upper()
     print_center("# # # #  H E L L O  # # # #")
     print("Do you have file with mpns to compare")
     compare_with_another_file = input("[Y/N] ").upper()
@@ -123,19 +127,46 @@ def main():
     print(similar_phrases)
     print("")
 
-for i in range(os.get_terminal_size().columns-1):
-    if i >= os.get_terminal_size().columns-2:
-        print("#")
-    else:
-        print("#",end="")
+    # Close connection with database
+    conn.close()
+
+    # END of program
+    print_center(Back.GREEN+"# # # #  D O N E  # # # #"+Style.RESET_ALL)
+
+def checkMPN():
+    conn = connect(param_dic)
+    time.sleep(3)
+
+    mpn = input("MPN: ")
+
+    if not conn == None:
+        temp = "'"+mpn+"'"
+        # connect to database
+        column_names = ["mpn", "manufacturer_root_name"]
+
+        # Here we can tyoe SQL query
+        query =     """SELECT mpn,manufacturer_root_name 
+                    FROM manufacturers
+                    WHERE mpn ILIKE""" + temp
+
+        query_df = postgresql_to_dataframe(conn, query, column_names)
+        print("")
+        print_center("# # # #  M P N  # # # #")
+        print(query_df)
+
+        # Close connection with database
+        conn.close()
+
 
 def compareTwoFiles():
+    # Type name of files to open
     firstFile = input("Name of first file: ")
     secondFile = input("Name of second file: ")
 
     first_df = pd.read_csv('files/'+firstFile+'.csv')
     second_df = pd.read_csv('files/'+secondFile+'.csv')
 
+    # Show columns name and type column to compare
     print("\nColumns in first file:",end=" ")
     for col in first_df.columns:
         print(col, end=" | ")
@@ -148,14 +179,21 @@ def compareTwoFiles():
     print("")
     column_second_file = input("Which column do you want to compare? ")
 
+    # Rename columns
     first_new_df = first_df.rename(columns={column_first_file:'Compared'})
     second_new_def = second_df.rename(columns={column_second_file:'Compared'})
 
+    # Normalized values to upper letters
     first_new_df['Compared'] = first_new_df['Compared'].str.upper()
     second_new_def['Compared'] = second_new_def['Compared'].str.upper()
 
+    # Merge files
     merged_df = pd.merge(first_new_df['Compared'].reset_index(drop=True),second_new_def['Compared'].reset_index(drop=True))
     print(merged_df)
+    print("")
+
+    # END of program
+    print_center(Back.GREEN+"# # # #  D O N E  # # # #"+Style.RESET_ALL)
 
 system_info()
 clear_screen()
@@ -167,10 +205,10 @@ option, index = pick(options, title, indicator='=>', default_index=2)
 if index == 0: # Compare two files
     compareTwoFiles()
 elif index == 1:
-    #checkMPN()
+    checkMPN()
     print("")
 elif index == 2:
-    #searchForOneCompany()
+    searchForOneCompany()
     print("")
 elif index == 3:
     #searchForMore()
@@ -178,12 +216,3 @@ elif index == 3:
 else:
     # END of program
     print_center(Back.GREEN+"# # # #  D O N E  # # # #"+Style.RESET_ALL)
-
-conn = connect(param_dic)
-time.sleep(5)
-phrases_df = pd.read_csv("csv-files/phrases-not-found.csv") # Open file with not found phrases
-phrases_df['name']=phrases_df['name'].str.upper()
-main()
-
-# END of program
-print_center(Back.GREEN+"# # # #  D O N E  # # # #"+Style.RESET_ALL)
