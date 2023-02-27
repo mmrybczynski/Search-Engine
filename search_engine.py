@@ -170,7 +170,7 @@ def tempOneYear(manufacturer_name,phrases_df,conn):
         print("")
 
 
-def searchForMoreCompanys():
+def searchForMoreCompanies():
     conn = connect(param_dic)
     time.sleep(3)
     print_center("# # # #  H E L L O  # # # #")
@@ -261,17 +261,17 @@ system_info()
 clear_screen()
 
 title = 'Please choose what do you want to do'
-options = ['Check qty of search company (One year)','Check qty of search company (Two years)','Check qty of search company for more companys (One year)','Check qty of search company for more companys (Two year)','Compare two files', 'Check mpn']
+options = ['Check qty of search company (One year)','Check qty of search company (Two years)','Check qty of search company for more companies (One year)','Check qty of search company for more companies (Two year)','Compare two files', 'Check mpn']
 option, index = pick(options, title, indicator='=>', default_index=1)
 
 if index == 0: # Check qty of search company (One year)
     searchForOneCompany()
 elif index == 1: # Check qty of search company (Two years)
     print("")
-elif index == 2: # Check qty of search company for more companys (One year)
-    searchForMoreCompanys()
+elif index == 2: # Check qty of search company for more companies (One year)
+    searchForMoreCompanies()
     print("")
-elif index == 3: # Check qty of search company for more companys (Two year)
+elif index == 3: # Check qty of search company for more companies (Two year)
     print("")
 elif index == 4: # Compare two files'
     compareTwoFiles()
