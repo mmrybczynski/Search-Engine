@@ -6,6 +6,7 @@ import pandas as pd
 import psycopg2
 from colorama import Fore, Back, Style
 import warnings
+from pick import pick
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
 # Connection to databse
@@ -117,7 +118,7 @@ def main():
         print(founded_in_database)
     
     # Look similar phrases
-    array_to_checking = [name_of_manufacturer+" ",name_of_manufacturer+":",name_of_manufacturer+"-",name_of_manufacturer+" :",name_of_manufacturer+" -"]
+    array_to_checking = [name_of_manufacturer+" ",name_of_manufacturer+":",name_of_manufacturer+"-",name_of_manufacturer+"."]
     similar_phrases = phrases_df.loc[phrases_df['name'].str.contains('|'.join(array_to_checking)).ffill(False)]
     print("")
     print_center("# # # #  S I M I L A R # # # #")
@@ -129,7 +130,23 @@ for i in range(os.get_terminal_size().columns-1):
         print("#")
     else:
         print("#",end="")
-        
+
+title = 'Please choose what do you want to do'
+options = ['Compare two files', 'Check mpn', 'Check qty of search company', 'Check qty of search company for more companys']
+option, index = pick(options, title, indicator='=>', default_index=2)
+
+if index == 0: # Compare two files
+    compareTwoFiles()
+elif index == 1:
+    checkMPN()
+elif index == 2:
+    searchForOneCompany()
+elif index == 3:
+    searchForMore()
+else:
+    # END of program
+    print_center(Back.GREEN+"# # # #  D O N E  # # # #"+Style.RESET_ALL)
+
 conn = connect(param_dic)
 time.sleep(5)
 phrases_df = pd.read_csv("csv-files/phrases-not-found.csv") # Open file with not found phrases
