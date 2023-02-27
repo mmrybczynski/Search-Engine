@@ -78,9 +78,10 @@ def postgresql_to_dataframe(conn, select_query, column_names):
 def searchForOneCompany():
     conn = connect(param_dic)
     time.sleep(3)
-    phrases_df = pd.read_csv("csv-files/phrases-not-found.csv") # Open file with not found phrases
-    phrases_df['name']=phrases_df['name'].str.upper()
     print_center("# # # #  H E L L O  # # # #")
+    year = input("Year of phrases not found file: ")
+    phrases_df = pd.read_csv("csv-files/phrases-not-found-"+year+".csv") # Open file with not found phrases
+    phrases_df['name']=phrases_df['name'].str.upper()
     print("Do you have file with mpns to compare")
     compare_with_another_file = input("[Y/N] ").upper()
     if compare_with_another_file == "Y":
@@ -133,6 +134,68 @@ def searchForOneCompany():
     # END of program
     print_center(Back.GREEN+"# # # #  D O N E  # # # #"+Style.RESET_ALL)
 
+def tempOneYear(manufacturer_name,phrases_df,conn):
+    # Search name of company in phrases not found file
+    print_center('# # # #  '+manufacturer_name+'  # # # #')
+    search_name = phrases_df.loc[phrases_df['name'] == manufacturer_name]
+    print(search_name)
+
+    # Combine database pandas dataframe with phrases not found
+    if not conn == None:
+        temp = "'"+manufacturer_name+"'"
+        # connect to database
+        column_names = ["mpn", "manufacturer_root_name"]
+
+        # Here we can tyoe SQL query
+        query =     """SELECT mpn,manufacturer_root_name 
+                    FROM manufacturers
+                    WHERE manufacturer_root_name ILIKE""" + temp
+
+        query_df = postgresql_to_dataframe(conn, query, column_names)
+        query_df['mpn']=query_df['mpn'].str.upper()
+        new_name = query_df.rename(columns={'mpn':'name'})
+        founded_in_database = pd.merge(phrases_df.reset_index(drop=True),new_name['name'].reset_index(drop=True))
+        print("")
+        if len(founded_in_database) > 0:
+            print_center("# # # #  D A T A B A S E  # # # #")
+            print(founded_in_database)
+
+    # Look similar phrases
+    array_to_checking = [manufacturer_name+" ",manufacturer_name+":",manufacturer_name+"-",manufacturer_name+"."]
+    similar_phrases = phrases_df.loc[phrases_df['name'].str.contains('|'.join(array_to_checking)).ffill(False)]
+    print("")
+    if len(similar_phrases) > 0:
+        print_center("# # # #  S I M I L A R # # # #")
+        print(similar_phrases)
+        print("")
+
+
+def searchForMoreCompanys():
+    conn = connect(param_dic)
+    time.sleep(3)
+    print_center("# # # #  H E L L O  # # # #")
+    year = input("Year of phrases not found file: ")
+    phrases_df = pd.read_csv("csv-files/phrases-not-found-"+year+".csv") # Open file with not found phrases
+    phrases_df['name']=phrases_df['name'].str.upper()
+
+    typing = True
+    names_list = []
+    while(typing == True):
+        name = input("Name: ").upper()
+        if not name == "":
+            names_list.append(name)
+        else:
+            typing = False
+
+    for i in range(len(names_list)):
+        tempOneYear(names_list[i],phrases_df,conn)
+
+    # Close connection with database
+    conn.close()
+
+    # END of program
+    print_center(Back.GREEN+"# # # #  D O N E  # # # #"+Style.RESET_ALL)
+
 def checkMPN():
     conn = connect(param_dic)
     time.sleep(3)
@@ -156,7 +219,6 @@ def checkMPN():
 
         # Close connection with database
         conn.close()
-
 
 def compareTwoFiles():
     # Type name of files to open
@@ -199,20 +261,22 @@ system_info()
 clear_screen()
 
 title = 'Please choose what do you want to do'
-options = ['Compare two files', 'Check mpn', 'Check qty of search company', 'Check qty of search company for more companys']
-option, index = pick(options, title, indicator='=>', default_index=2)
+options = ['Check qty of search company (One year)','Check qty of search company (Two years)','Check qty of search company for more companys (One year)','Check qty of search company for more companys (Two year)','Compare two files', 'Check mpn']
+option, index = pick(options, title, indicator='=>', default_index=1)
 
-if index == 0: # Compare two files
-    compareTwoFiles()
-elif index == 1:
-    checkMPN()
-    print("")
-elif index == 2:
+if index == 0: # Check qty of search company (One year)
     searchForOneCompany()
+elif index == 1: # Check qty of search company (Two years)
     print("")
-elif index == 3:
-    #searchForMore()
+elif index == 2: # Check qty of search company for more companys (One year)
+    searchForMoreCompanys()
     print("")
+elif index == 3: # Check qty of search company for more companys (Two year)
+    print("")
+elif index == 4: # Compare two files'
+    compareTwoFiles()
+elif index == 5: # Check mpn
+    checkMPN()
 else:
     # END of program
     print_center(Back.GREEN+"# # # #  D O N E  # # # #"+Style.RESET_ALL)
