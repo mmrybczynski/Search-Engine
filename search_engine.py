@@ -82,8 +82,8 @@ def searchForOneCompany():
     year = input("Year of phrases not found file: ")
     phrases_df = pd.read_csv("csv-files/phrases-not-found-"+year+".csv") # Open file with not found phrases
     phrases_df['name']=phrases_df['name'].str.upper()
-    print("Do you have file with mpns to compare")
-    compare_with_another_file = input("[Y/N] ").upper()
+    print("Do you have file with mpns to compare [Y/N]")
+    compare_with_another_file = input(">>> ").upper()
     if compare_with_another_file == "Y":
         # Compare with file
         name_of_file = input("Name of file: ")
@@ -256,11 +256,22 @@ def compareTwoFiles():
     # END of program
     print_center(Back.GREEN+"# # # #  D O N E  # # # #"+Style.RESET_ALL)
 
+def checkDistributor():
+    file_with_distributors = pd.read_csv("csv-files/distributors.csv") # Open file with distributors
+    file_with_distributors['name'] = file_with_distributors['name'].str.upper()
+    name_of_manufacturer = input("Type name of manufacturer: ").upper()
+    print_center("# # # #  N A M E  # # # #")
+    name = file_with_distributors.loc[file_with_distributors['name']== name_of_manufacturer]
+    print(name)
+    print_center("# # # #  S I M I L L A R  # # # #")
+    simillar_name = file_with_distributors.loc[file_with_distributors['name'].str.contains(name_of_manufacturer)]
+    print(simillar_name)
+
 system_info()
 clear_screen()
 
 title = 'Please choose what do you want to do'
-options = ['Check qty of search company (One year)','Check qty of search company (Two years)','Check qty of search company for more companies (One year)','Check qty of search company for more companies (Two year)','Compare two files', 'Check mpn']
+options = ['Check qty of search company (One year)','Check qty of search company (Two years)','Check qty of search company for more companies (One year)','Check qty of search company for more companies (Two year)','Compare two files', 'Check mpn', 'Check distributors']
 option, index = pick(options, title, indicator='=>', default_index=1)
 
 if index == 0: # Check qty of search company (One year)
@@ -276,6 +287,8 @@ elif index == 4: # Compare two files'
     compareTwoFiles()
 elif index == 5: # Check mpn
     checkMPN()
+elif index == 6:
+    checkDistributor()
 else:
     # END of program
     print_center(Back.GREEN+"# # # #  D O N E  # # # #"+Style.RESET_ALL)
