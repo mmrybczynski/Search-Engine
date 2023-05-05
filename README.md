@@ -22,7 +22,7 @@ pip install psycopg2
 pip install colorama
 ```
 ```bash
-pip install platform
+pip install lib-platform
 ```
 ```bash
 pip install pick
